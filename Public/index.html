@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Study Materials Class 9 Science</title>
+
   <style>
     body {
       font-family: sans-serif;
@@ -47,16 +48,17 @@
 
     iframe {
       width: 100%;
-      height: calc(100vh - 20px); /* 📌 FULL height */
+      height: calc(100vh - 20px);
       border: 2px solid #004D40;
-      margin-top: 0;               /* 📌 Remove top margin to get more space */
       border-radius: 6px;
+      margin-top: 0;
       box-shadow: 0 3px 6px rgba(0,0,0,0.1);
     }
   </style>
 </head>
 
 <body>
+
   <div id="loginContainer">
     <h2>Login to Study Materials Class 9 Science</h2>
     <input type="email" id="emailInput" placeholder="Enter your email" required />
@@ -64,15 +66,14 @@
   </div>
 
   <div id="appContainer">
-    <!-- 🔥 Heading Removed for Maximum Space -->
-    <iframe id="viewer" src=""></iframe>
+    <iframe id="viewer"></iframe>
   </div>
 
   <script>
     const BACKEND_URL = "https://sm-cl-9-backen.onrender.com";
 
-    // 🔥 Your single URL
-    const SINGLE_LINK = "https://jitenclass9.github.io/S-M-ATOMS-AND-MOLECULES/CLASS-9 STUDY MATERIALS.html";
+    const SINGLE_LINK =
+      "https://jitenclass9.github.io/S-M-ATOMS-AND-MOLECULES/CLASS-9 STUDY MATERIALS.html";
 
     async function login() {
       const email = document.getElementById("emailInput").value.trim().toLowerCase();
@@ -88,10 +89,13 @@
       });
 
       const data = await res.json();
-      if (data.token) {
-        localStorage.setItem("studentEmail", email);
-        localStorage.setItem("sessionToken", data.token);
 
+      if (data.token) {
+        // ❌ DO NOT STORE ANYTHING IN LOCAL STORAGE
+        // ❌ DO NOT SAVE TOKEN
+        // ❌ DO NOT SAVE EMAIL
+
+        // ✔ SHOW STUDY MATERIAL DIRECTLY
         document.getElementById("loginContainer").style.display = "none";
         document.getElementById("appContainer").style.display = "block";
 
@@ -102,47 +106,15 @@
       }
     }
 
-    // Auto-login
-    window.onload = async function() {
-      const email = localStorage.getItem("studentEmail");
-      const token = localStorage.getItem("sessionToken");
-      if (!email || !token) return;
-
-      const res = await fetch(`${BACKEND_URL}/validate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, token })
-      });
-
-      const data = await res.json();
-      if (data.valid) {
-        document.getElementById("loginContainer").style.display = "none";
-        document.getElementById("appContainer").style.display = "block";
-        document.getElementById("viewer").src = SINGLE_LINK;
-      } else {
-        localStorage.clear();
-      }
+    // ❌ REMOVE AUTO-LOGIN
+    // NOTHING RUNS HERE ON PAGE LOAD
+    window.onload = function() {
+      // Always ask email → do nothing here
     };
 
-    // Auto logout if opened on another device
-    setInterval(async () => {
-      const email = localStorage.getItem("studentEmail");
-      const token = localStorage.getItem("sessionToken");
-      if (!email || !token) return;
+    // ❌ REMOVE AUTO-LOGOUT CHECK
+    // Because no token is stored, no need to validate repeatedly
 
-      const res = await fetch(`${BACKEND_URL}/validate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, token })
-      });
-
-      const data = await res.json();
-      if (!data.valid) {
-        alert("⚠️ You have been logged out because this account was opened on another device.");
-        localStorage.clear();
-        location.reload();
-      }
-    }, 5000);
   </script>
 </body>
 </html>
