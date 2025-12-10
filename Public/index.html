@@ -4,75 +4,108 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Study Materials Class 9 Science</title>
+
   <style>
     body {
-      font-family: sans-serif;
-      margin: 15px;
-      background: linear-gradient(135deg, #f9f9f9, #e0f7fa);
-      color: #333;
-      font-size: 13px;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #ffffff, #dce8ff);
+      margin: 0;
+      padding: 0;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
     }
 
-    #loginContainer {
+    #loginCard {
+      background: #ffffff;
+      padding: 30px 25px 35px 25px;
+      border-radius: 14px;
+      width: 320px;
+      text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
+      box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+      border: 1px solid #c7d6ff;
     }
 
-    #loginContainer input {
-      padding: 8px;
-      border: 2px solid #00796B;
-      border-radius: 5px;
+    #loginCard img {
+      width: 95px;
+      margin-bottom: 15px;
+    }
+
+    #loginCard h2 {
+      font-size: 18px;
+      margin-bottom: 20px;
+      color: #003c8f;
+      font-weight: 700;
+    }
+
+    #loginCard input {
+      width: 100%;
+      padding: 12px;
+      border: 2px solid #003c8f;
+      border-radius: 6px;
       font-size: 14px;
-      margin-bottom: 10px;
-      width: 250px;
+      margin-bottom: 18px;
+      outline: none;
     }
 
-    #loginContainer button {
-      padding: 8px 12px;
-      border: 2px solid #00796B;
-      border-radius: 5px;
-      background-color: #e0f2f1;
-      color: #004D40;
-      font-size: 13px;
+    #loginCard button {
+      width: 100%;
+      padding: 12px;
+      background: #003c8f;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 15px;
       cursor: pointer;
+      font-weight: bold;
     }
 
-    #appContainer { 
-      display: none; 
+    #appContainer {
+      display: none;
+      width: 100vw;
+      height: 100vh;
     }
 
     iframe {
       width: 100%;
-      height: calc(100vh - 20px); /* 📌 FULL height */
-      border: 2px solid #004D40;
-      margin-top: 0;               /* 📌 Remove top margin to get more space */
-      border-radius: 6px;
-      box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+      height: 100%;
+      border: none;
     }
   </style>
 </head>
 
 <body>
+
   <div id="loginContainer">
-    <h2>Login to Study Materials Class 9 Science</h2>
-    <input type="email" id="emailInput" placeholder="Enter your email" required />
-    <button onclick="login()">Login</button>
+    <div id="loginCard">
+
+      <img src="https://i.ibb.co/WNZTWPwv/LOGO-PNG-2025-fab.png" alt="Logo">
+
+      <h2>Login to Study Materials<br>Class 9 Science</h2>
+
+      <input type="email" id="emailInput" placeholder="Enter your email" required />
+
+      <button onclick="login()">Login</button>
+    </div>
   </div>
 
   <div id="appContainer">
-    <!-- 🔥 Heading Removed for Maximum Space -->
-    <iframe id="viewer" src=""></iframe>
+    <iframe id="viewer"></iframe>
   </div>
 
   <script>
-    const BACKEND_URL = "https://sm-cl-9-backen.onrender.com";
+    const BACKEND_URL = "https://s-m-12-physics.onrender.com";
 
-    // 🔥 Your single URL
-    const SINGLE_LINK = "https://gten-educational-platform.github.io/Class-12/Study materials Math IIT- JEE.html";
+    const SINGLE_LINK =
+      "https://jitenclass9.github.io/S-M-ATOMS-AND-MOLECULES/CLASS-9 STUDY MATERIALS.html";
+
+    // ------------------------------
+    // LOGIN FUNCTION (One-device login added)
+    // ------------------------------
 
     async function login() {
       const email = document.getElementById("emailInput").value.trim().toLowerCase();
@@ -88,33 +121,36 @@
       });
 
       const data = await res.json();
+
       if (data.token) {
         localStorage.setItem("studentEmail", email);
         localStorage.setItem("sessionToken", data.token);
 
         document.getElementById("loginContainer").style.display = "none";
         document.getElementById("appContainer").style.display = "block";
-
         document.getElementById("viewer").src = SINGLE_LINK;
-
       } else {
         alert("Login failed. Try again.");
       }
     }
 
-    // Auto-login
+    // ------------------------------
+    // RESTORE SESSION ON PAGE LOAD
+    // ------------------------------
     window.onload = async function() {
-      const email = localStorage.getItem("studentEmail");
+      const savedEmail = localStorage.getItem("studentEmail");
       const token = localStorage.getItem("sessionToken");
-      if (!email || !token) return;
+
+      if (!savedEmail || !token) return;
 
       const res = await fetch(`${BACKEND_URL}/validate`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, token })
+        body: JSON.stringify({ email: savedEmail, token })
       });
 
       const data = await res.json();
+
       if (data.valid) {
         document.getElementById("loginContainer").style.display = "none";
         document.getElementById("appContainer").style.display = "block";
@@ -124,10 +160,13 @@
       }
     };
 
-    // Auto logout if opened on another device
+    // ------------------------------
+    // AUTO-LOGOUT IF ANOTHER DEVICE LOGS IN
+    // ------------------------------
     setInterval(async () => {
       const email = localStorage.getItem("studentEmail");
       const token = localStorage.getItem("sessionToken");
+
       if (!email || !token) return;
 
       const res = await fetch(`${BACKEND_URL}/validate`, {
@@ -137,6 +176,7 @@
       });
 
       const data = await res.json();
+
       if (!data.valid) {
         alert("⚠️ You have been logged out because this account was opened on another device.");
         localStorage.clear();
@@ -144,5 +184,6 @@
       }
     }, 5000);
   </script>
+
 </body>
 </html>
